@@ -1,0 +1,28 @@
+{
+  "name": "node-licence-scan",
+  "version": "0.0.1",
+  "description": "Scans node projects for dependency licences",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MrWestbury/node-licence-scan.git"
+  },
+  "keywords": [
+    "node",
+    "npm",
+    "licence",
+    "scan"
+  ],
+  "author": "Adam Eastbury",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MrWestbury/node-licence-scan/issues"
+  },
+  "homepage": "https://github.com/MrWestbury/node-licence-scan",
+  "dependencies": {
+    "lodash": "^4.16.4"
+  }
+}
