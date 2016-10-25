@@ -15,7 +15,7 @@ var addCatalog = function(name, fpath, ver, url, lic) {
 	if(catalog.index[name] === undefined) {
 		catalog.index[name] = {};
 	}
-	
+
 	if(catalog.index[name][ver] === undefined) {
 		var entry = {
 			name: name,
@@ -34,7 +34,7 @@ var addCatalog = function(name, fpath, ver, url, lic) {
 };
 
 var addLicense = function(name, lic) {
-	
+
 	if(catalog.licenses[lic] === undefined) {
 		catalog.licenses[lic] = {
 			count: 1,
@@ -44,15 +44,15 @@ var addLicense = function(name, lic) {
 	else {
 		catalog.licenses[lic].count++;
 		if(catalog.licenses[lic].uses.indexOf(name) === -1) {
-			catalog.licenses[lic].uses.push(name);		
+			catalog.licenses[lic].uses.push(name);
 		}
 	}
 };
 
 var processFile = function(file) {
-	
+
 	try {
-		var pkg = JSON.parse(fs.readFileSync(file));	
+		var pkg = JSON.parse(fs.readFileSync(file));
 		var license = pkg.license || pkg.licenses;
 		if(license === undefined) {
 			license = 'none';
@@ -74,11 +74,11 @@ var processFile = function(file) {
 		}
 		else if(objType === '[object Array]') {
 			license.forEach(function(lic) {
-				
+
 				var licType = Object.prototype.toString.call( lic );
 				if(licType === '[object String]') {
 					addCatalog(pkg.name, file, pkg.version, url, license.join(', '));
-					addLicense(pkg.name, lic);	
+					addLicense(pkg.name, lic);
 				}
 				else if(licType === ['object Object']) {
 					var licArr = [];
@@ -88,7 +88,7 @@ var processFile = function(file) {
 					});
 					addCatalog(pkg.name, file, pkg.version, url, licArr.join(', '));
 				}
-				
+
 			});
 		}
 		else if(objType === '[object Object]') {
@@ -99,7 +99,7 @@ var processFile = function(file) {
 			addCatalog(pkg.name, file, pkg.version, url, 'unknown');
 			addLicense(pkg.name, 'unknown');
 		}
-		
+
 		return true;
 	}
 	catch(ex) {
@@ -111,7 +111,7 @@ var processFile = function(file) {
 
 var scanFolder = function(folder) {
 	var entries = fs.readdirSync(folder);
-		
+
 	entries.forEach(function(entry) {
 		var entryPath = path.join(folder, entry);
 		var stat = fs.statSync(entryPath);
@@ -125,8 +125,26 @@ var scanFolder = function(folder) {
 	});
 };
 
-scanFolder('C:\\a\\DISTRIBUTE');
-var outFile = path.join(__dirname, 'results.json');
+var inFolderStr = process.argv[2];
+if(inFolderStr === undefined) {
+	console.log('Project root folder missing from argument list');
+	process.exit(1);
+}
+
+inFolderStr = path.resolve(inFolderStr);
+var inFolderStat = fs.statSync(inFolderStr);
+if(!inFolderStat.isDirectory()) {
+	console.log('Project root folder is not a folder');
+	process.exit(1);
+}
+
+var resultsFile = process.argv[3];
+if(resultsFile === undefined) {
+	resultsFile = "results.json";
+}
+
+var outFile = path.resolve(resultsFile);
+scanFolder(inFolderStr);
 if(fs.existsSync(outFile)) {
 	fs.unlinkSync(outFile);
 }
